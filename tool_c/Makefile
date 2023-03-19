@@ -48,10 +48,10 @@ ifneq ($(shell git rev-parse --abbrev-ref HEAD),main)
 	$(error current branch is not main)
 endif
 	@gobump up -w ./cmd/tool_c
-	git commit -am "bump up version to $(VERSION)"
+	git commit -am "bump tool_c to $(VERSION)"
 	git tag "tool_c/v$(VERSION)"
 	git push origin main
-	git push origin "refs/tags/tool_c/v$(VERSION)"
+	git push origin "tool_c/v$(VERSION)"
 
 .PHONY: upload
 upload: $(GOBIN)/ghr
