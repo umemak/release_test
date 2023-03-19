@@ -21,7 +21,7 @@ jobs:
       - name: Install deps
         run: |
           go install github.com/Songmu/goxz/cmd/goxz@latest
-        	go install github.com/tcnksm/ghr@latest
+          go install github.com/tcnksm/ghr@latest
 
       - name: Cross build
         run: |
