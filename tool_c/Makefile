@@ -50,7 +50,7 @@ endif
 	@gobump up -w ./cmd/tool_c
 	git commit -am "bump up version to $(VERSION)"
 	git tag "tool_c/v$(VERSION)"
-	git push origin master
+	git push origin main
 	git push origin "refs/tags/v$(VERSION)"
 
 .PHONY: upload
