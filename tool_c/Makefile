@@ -51,7 +51,7 @@ endif
 	git commit -am "bump up version to $(VERSION)"
 	git tag "tool_c/v$(VERSION)"
 	git push origin main
-	git push origin "refs/tags/v$(VERSION)"
+	git push origin "refs/tags/tool_c/v$(VERSION)"
 
 .PHONY: upload
 upload: $(GOBIN)/ghr
