@@ -10,7 +10,7 @@ all: clean build
 
 .PHONY: build
 build:
-	go build -ldflags=$(BUILD_LDFLAGS) -o $(BIN) .
+	go build -ldflags=$(BUILD_LDFLAGS) -o $(BIN) ./cmd/tool_c
 
 .PHONY: install
 install:
@@ -18,14 +18,14 @@ install:
 
 .PHONY: show-version
 show-version: $(GOBIN)/gobump
-	gobump show -r .
+	gobump show -r ./cmd/tool_c
 
 $(GOBIN)/gobump:
 	go install github.com/x-motemen/gobump/cmd/gobump@latest
 
 .PHONY: cross
 cross: $(GOBIN)/goxz
-	goxz -n $(BIN) -pv=v$(VERSION) -build-ldflags=$(BUILD_LDFLAGS) .
+	goxz -n $(BIN) -pv=v$(VERSION) -build-ldflags=$(BUILD_LDFLAGS) ./cmd/tool_c
 
 $(GOBIN)/goxz:
 	go install github.com/Songmu/goxz/cmd/goxz@latest
@@ -47,9 +47,9 @@ endif
 ifneq ($(shell git rev-parse --abbrev-ref HEAD),master)
 	$(error current branch is not master)
 endif
-	@gobump up -w .
+	@gobump up -w ./cmd/tool_c
 	git commit -am "bump up version to $(VERSION)"
-	git tag "v$(VERSION)"
+	git tag "tool_c/v$(VERSION)"
 	git push origin master
 	git push origin "refs/tags/v$(VERSION)"
 
