@@ -1,0 +1,45 @@
+name: Release tool_d
+
+on:
+  push:
+    tags:
+      - 'tool_d/v[0-9]+.[0-9]+.[0-9]+'
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.20'
+
+      - name: Install deps
+        run: |
+          go install github.com/Songmu/goxz/cmd/goxz@latest
+        	go install github.com/tcnksm/ghr@latest
+
+      - name: Cross build
+        run: |
+          cd tool_d
+          goxz -n tool_d -pv=${{ github.ref }} -build-ldflags="-s -w" ./cmd/tool_d
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+
+      - name: Upload
+        run: |
+          cd tool_d
+          ghr "Release ${{ github.ref }}" goxz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
