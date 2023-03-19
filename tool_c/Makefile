@@ -55,7 +55,7 @@ endif
 
 .PHONY: upload
 upload: $(GOBIN)/ghr
-	ghr "v$(VERSION)" goxz
+	ghr "Release tool_c/v$(VERSION)" goxz
 
 $(GOBIN)/ghr:
 	go install github.com/tcnksm/ghr@latest
