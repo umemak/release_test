@@ -26,7 +26,7 @@ jobs:
       - name: Cross build
         run: |
           cd tool_d
-          goxz -n tool_d -pv=${{ github.ref }} -build-ldflags="-s -w" ./cmd/tool_d
+          goxz -build-ldflags="-s -w" ./cmd/tool_d
 
       - name: Create Release
         id: create_release
