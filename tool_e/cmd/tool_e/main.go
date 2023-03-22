@@ -4,8 +4,8 @@ import (
 	"fmt"
 )
 
-const version = "0.0.0"
+const version = "0.0.1"
 
-func main(){
+func main() {
 	fmt.Println("tool E")
 }
