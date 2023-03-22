@@ -7,5 +7,5 @@ import (
 const version = "0.0.2"
 
 func main() {
-	fmt.Println("tool B")
+	fmt.Println("tool B rel")
 }
