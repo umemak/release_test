@@ -32,3 +32,4 @@ jobs:
           goarch: amd64
           project_path: ./tool_e/cmd/tool_e
           binary_name: tool_e
+          release_name: ${{ github.ref }}
