@@ -23,11 +23,16 @@ jobs:
           cd tool_b
           go build -o tool_b cmd/tool_b/main.go
 
+      - name: Release Notes
+        run:
+          git log $(git describe HEAD~ --tags --abbrev=0)..HEAD --pretty='format:* %h %s%n  * %an <%ae>' --no-merges >> ".github/RELEASE-TEMPLATE.md"
+
       - name: Release
         uses: softprops/action-gh-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           name: Release ${{ github.ref }}
+          body_path: ".github/RELEASE-TEMPLATE.md"
           files: |
             ./tool_b/tool_b
