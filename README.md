@@ -13,7 +13,9 @@ GoのCLIツールをGitHub ActionsでReleaseするテスト。
 - tool_c
   - https://github.com/mattn/goreman/blob/master/.github/workflows/release.yml を参考にしたパターン
   - [actions/create-release](https://github.com/actions/create-release) と [x-motemen/gobump](https://github.com/x-motemen/gobump) と [Songmu/goxz](https://github.com/Songmu/goxz) と [tcnksm/ghr](https://github.com/tcnksm/ghr) を使用している。
-  - gobumpでもtagをpushしているせいか、Releaseが2つにわかれてしまう。
-  - gobump用に、main.goにconst versionを入れる必要がある。
+  - ~~gobumpでもtagをpushしているせいか、Releaseが2つにわかれてしまう。~~
+  - ~~gobump用に、main.goにconst versionを入れる必要がある。~~
+  - `make bump`でいい感じにできる。
 - tool_d
   - tool_cでgobumpを使わないパターン。
+  - →tool_cの使い方が悪かっただけなのでなし。
