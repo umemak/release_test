@@ -32,9 +32,8 @@ jobs:
           inlineScript: |
             az storage blob upload-batch \
               --account-name ${{ secrets.AZURE_SA_NAME }} \
-              --auth-mode key \
-              -d '$web' \
-              -s ./tool_f
+              --destination '$web' \
+              --source ./tool_f
       - name: logout
         run: |
           az logout
