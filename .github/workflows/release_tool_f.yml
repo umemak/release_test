@@ -53,11 +53,11 @@ jobs:
         with:
           inlineScript: |
             az storage blob upload-batch \
-              --connection-string ${{ secrets.ConnectionString }} \
               --source ./tool_f/bin \
               --destination '$web' \
               --overwrite true \
-              --pattern *.gz
+              --pattern *.gz \
+              --connection-string "${{ secrets.ConnectionString }}"
       - name: Remove the public IP from the whitelist
         if: always()
         uses: azure/CLI@v1
