@@ -18,10 +18,10 @@ jobs:
           go-version: '1.20'
       - name: Build
         run: |
-          cd tool_e
-          go build -ldflags="-w -s" -trimpath -o bin/tool_e .
+          cd tool_f
+          go build -ldflags="-w -s" -trimpath -o bin/tool_f .
           cd bin
-          gzip tool_e
+          gzip tool_f
       - name: Set up Azure CLI
         uses: azure/login@92a5484dfaf04ca78a94597f4f19fea633851fa2 # v1.4.6
         with:
@@ -34,7 +34,7 @@ jobs:
               --account-name ${{ secrets.AZURE_SA_NAME }} \
               --auth-mode key \
               -d '$web' \
-              -s ./tool_e/bin/tool_e.gz
+              -s ./tool_f/bin/tool_f.gz
       - name: logout
         run: |
           az logout
