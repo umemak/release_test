@@ -30,6 +30,9 @@ jobs:
       #     extra_args: '--pattern *.gz'
       #     # WARNING: this will overwrite existing blobs in your blob storage
       #     overwrite: 'true'
+      - name: Queries the GitHub actions runner's public IP address
+        id: ip
+        uses: haythem/public-ip@v1.2
       - name: Set up Azure CLI
         uses: azure/login@92a5484dfaf04ca78a94597f4f19fea633851fa2 # v1.4.6
         with:
@@ -37,7 +40,7 @@ jobs:
       - name: Add the public IP to the whitelist
         uses: azure/CLI@v1
         with:
-          azcliversion: 2.30.0
+          # azcliversion: 2.30.0
           inlineScript: |
             az storage account network-rule add \
               --account-name ${{ secrets.AZURE_SA_NAME }} \
@@ -59,7 +62,7 @@ jobs:
         if: always()
         uses: azure/CLI@v1
         with:
-          azcliversion: 2.30.0
+          # azcliversion: 2.30.0
           inlineScript: |
             az storage account network-rule remove \
               --account-name ${{ secrets.AZURE_SA_NAME }} \
