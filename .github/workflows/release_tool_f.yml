@@ -19,7 +19,7 @@ jobs:
       - name: Build
         run: |
           cd tool_f
-          go build -ldflags="-w -s" -trimpath -o bin/tool_f .
+          go build -ldflags="-w -s" -trimpath -o bin/tool_f cmd/tool_f/main.go
           cd bin
           gzip tool_f
       - name: Set up Azure CLI
