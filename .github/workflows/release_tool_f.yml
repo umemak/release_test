@@ -45,19 +45,19 @@ jobs:
             az storage account network-rule add \
               --account-name ${{ secrets.AZURE_SA_NAME }} \
               --ip-address ${{ steps.ip.outputs.ipv4 }}
-      - name: Sleep for 10 seconds
-        run: sleep 10s
+      - name: Sleep for 15 seconds
+        run: sleep 15s
         shell: bash
       - name: Upload to blob storage
         uses: azure/CLI@fa0f960f00db49b95fdb54328a767aee31e80105 # v1.0.7
         with:
           inlineScript: |
             az storage blob upload-batch \
+              --connection-string "${{ secrets.ConnectionString }}" \
               --source ./tool_f/bin \
               --destination '$web' \
               --overwrite true \
-              --pattern *.gz \
-              --connection-string "${{ secrets.ConnectionString }}"
+              --pattern *.gz
       - name: Remove the public IP from the whitelist
         if: always()
         uses: azure/CLI@v1
