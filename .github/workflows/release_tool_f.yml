@@ -54,8 +54,8 @@ jobs:
           inlineScript: |
             az storage blob upload-batch \
               --connection-string ${{ secrets.ConnectionString }} \
-              --destination '$web' \
               --source ./tool_f/bin \
+              --destination '$web' \
               --overwrite true \
               --pattern *.gz
       - name: Remove the public IP from the whitelist
