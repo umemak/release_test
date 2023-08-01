@@ -22,19 +22,27 @@ jobs:
           go build -ldflags="-w -s" -trimpath -o bin/tool_f cmd/tool_f/main.go
           cd bin
           gzip tool_f
-      - name: Set up Azure CLI
-        uses: azure/login@92a5484dfaf04ca78a94597f4f19fea633851fa2 # v1.4.6
+      - uses: bacongobbler/azure-blob-storage-upload@main
         with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
-      - name: Upload to blob storage
-        uses: azure/CLI@fa0f960f00db49b95fdb54328a767aee31e80105 # v1.0.7
-        with:
-          inlineScript: |
-            az storage blob upload-batch \
-              --account-name ${{ secrets.AZURE_SA_NAME }} \
-              --destination '$web' \
-              --source ./tool_f
-      - name: logout
-        run: |
-          az logout
-        if: always()
+          source_dir: ./tool_f/bin
+          container_name: '$web'
+          connection_string: ${{ secrets.ConnectionString }}
+          extra_args: '--pattern *.gz'
+          # WARNING: this will overwrite existing blobs in your blob storage
+          overwrite: 'true'
+      # - name: Set up Azure CLI
+      #   uses: azure/login@92a5484dfaf04ca78a94597f4f19fea633851fa2 # v1.4.6
+      #   with:
+      #     creds: ${{ secrets.AZURE_CREDENTIALS }}
+      # - name: Upload to blob storage
+      #   uses: azure/CLI@fa0f960f00db49b95fdb54328a767aee31e80105 # v1.0.7
+      #   with:
+      #     inlineScript: |
+      #       az storage blob upload-batch \
+      #         --account-name ${{ secrets.AZURE_SA_NAME }} \
+      #         --destination '$web' \
+      #         --source ./tool_f
+      # - name: logout
+      #   run: |
+      #     az logout
+      #   if: always()
