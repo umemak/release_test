@@ -34,7 +34,7 @@ jobs:
               --account-name ${{ secrets.AZURE_SA_NAME }} \
               --auth-mode key \
               -d '$web' \
-              -s ./tool_f/bin/tool_f.gz
+              -s ./tool_f
       - name: logout
         run: |
           az logout
