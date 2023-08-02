@@ -37,7 +37,15 @@ jobs:
       - name: Sleep for 15 seconds
         run: sleep 15s
         shell: bash
-      - name: Upload to blob storage
+      - name: Upload to blob storage(install.sh)
+        run: |
+          az storage blob upload-batch \
+            --connection-string "${{ secrets.ConnectionString }}" \
+            --source ./tool_f \
+            --destination 'release' \
+            --overwrite true \
+            --pattern install.sh
+      - name: Upload to blob storage(*.gz)
         run: |
           az storage blob upload-batch \
             --connection-string "${{ secrets.ConnectionString }}" \
