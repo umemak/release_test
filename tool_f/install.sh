@@ -22,7 +22,7 @@ main() {
 
 	az storage blob download --container-name release --name tool_f.gz -f "$tmp_dir/tool_f.gz"
 	# extract to tmp dir so we don't open existing executable file for writing:
-	tar -C "$tmp_dir" -xzf "$tmp_dir/tool_f.gz"
+	gunzip -kdf "$tmp_dir/tool_f.gz"
 	chmod +x "$tmp_dir/tool_f"
 	# atomically rename into place:
 	mv "$tmp_dir/tool_f" "$exe"
