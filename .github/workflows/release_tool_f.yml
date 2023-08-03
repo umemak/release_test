@@ -20,7 +20,7 @@ jobs:
         shell: bash
         run: |
           cd tool_f
-          for goos in darwin linix
+          for goos in darwin linux
           do
             for goarch in amd64 arm64
             do
