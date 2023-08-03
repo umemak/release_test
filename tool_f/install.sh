@@ -25,12 +25,6 @@ main() {
 	mv "$tmp_dir/tool_f" "$exe"
 	rm "$tmp_dir/tool_f.gz"
 
-	if [ "${1}" = "prerel" ] || [ "${1}" = "pre" ]; then
-		"$exe" version -s "shell-prerel"
-	else
-		"$exe" version -s "shell"
-	fi
-
 	echo "tool_f was installed successfully to $exe"
 	if command -v tool_f >/dev/null; then
 		echo "Run 'tool_f --help' to get started"

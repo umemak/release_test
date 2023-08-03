@@ -17,11 +17,21 @@ jobs:
         with:
           go-version: '1.20'
       - name: Build
+        shell: bash
         run: |
           cd tool_f
-          go build -ldflags="-w -s" -trimpath -o artifact/tool_f cmd/tool_f/main.go
+          for goos in darwin linix
+          do
+            for goarch in amd64 arm64
+            do
+              GOOS=$goos GOARCH=$goarch go build -ldflags="-w -s" -trimpath -o artifact/tool_f_$goos_$goarch cmd/tool_f/main.go
+            done
+          done
           cd artifact
-          gzip tool_f
+          for f in `ls -1`
+          do
+            gzip $f
+          done
           tag_name=${{ github.ref_name }}
           version=${tag_name##*/v}
           mkdir $version
