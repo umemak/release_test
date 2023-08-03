@@ -22,8 +22,10 @@ jobs:
           go build -ldflags="-w -s" -trimpath -o artifact/tool_f cmd/tool_f/main.go
           cd artifact
           gzip tool_f
-          mkdir ${{ github.ref_name }}
-          cp *.gz ${{ github.ref_name }}/
+          tag_name=${{ github.ref_name }}
+          version=${tag_name#v}
+          mkdir $version
+          cp *.gz $version/
           cp ../install.sh ./
       - name: Queries the GitHub actions runner's public IP address
         id: ip
