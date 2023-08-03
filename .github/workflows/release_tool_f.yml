@@ -23,7 +23,7 @@ jobs:
           cd artifact
           gzip tool_f
           tag_name=${{ github.ref_name }}
-          version=${tag_name#v}
+          version=${tag_name##*/}
           mkdir $version
           cp *.gz $version/
           cp ../install.sh ./
