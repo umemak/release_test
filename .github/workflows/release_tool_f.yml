@@ -24,7 +24,7 @@ jobs:
           do
             for goarch in amd64 arm64
             do
-              GOOS=$goos GOARCH=$goarch go build -ldflags="-w -s" -trimpath -o artifact/tool_f_$goos_$goarch cmd/tool_f/main.go
+              GOOS=$goos GOARCH=$goarch go build -ldflags="-w -s" -trimpath -o artifact/tool_f_${goos}_${goarch} cmd/tool_f/main.go
             done
           done
           cd artifact
