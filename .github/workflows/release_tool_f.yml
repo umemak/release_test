@@ -23,9 +23,11 @@ jobs:
           cd artifact
           gzip tool_f
           tag_name=${{ github.ref_name }}
-          version=${tag_name##*/}
+          version=${tag_name##*/v}
           mkdir $version
           cp *.gz $version/
+          mkdir latest
+          mv *.gz latest/
           cp ../install.sh ./
       - name: Queries the GitHub actions runner's public IP address
         id: ip

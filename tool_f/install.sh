@@ -9,10 +9,7 @@ main() {
 	arch=$(uname -m)
 	version=${1:-latest}
 
-	az_cmd="az storage blob download --container-name release --name tool_f.gz -f ./tool_f.gz"
-
 	tool_install="${TOOL_INSTALL:-$HOME/.tool_f}"
-
 	bin_dir="$tool_install/bin"
 	tmp_dir="$tool_install/tmp"
 	exe="$bin_dir/tool_f"
@@ -20,7 +17,7 @@ main() {
 	mkdir -p "$bin_dir"
 	mkdir -p "$tmp_dir"
 
-	az storage blob download --container-name release --name tool_f.gz -f "$tmp_dir/tool_f.gz"
+	az storage blob download --container-name release --name $version/tool_f.gz -f "$tmp_dir/tool_f.gz"
 	# extract to tmp dir so we don't open existing executable file for writing:
 	gunzip -kdf "$tmp_dir/tool_f.gz"
 	chmod +x "$tmp_dir/tool_f"
