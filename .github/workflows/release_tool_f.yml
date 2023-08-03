@@ -19,9 +19,12 @@ jobs:
       - name: Build
         run: |
           cd tool_f
-          go build -ldflags="-w -s" -trimpath -o bin/tool_f cmd/tool_f/main.go
-          cd bin
+          go build -ldflags="-w -s" -trimpath -o artifact/tool_f cmd/tool_f/main.go
+          cd artifact
           gzip tool_f
+          mkdir ${{ github.ref_name }}
+          cp *.gz ${{ github.ref_name }}/
+          cp ../install.sh ./
       - name: Queries the GitHub actions runner's public IP address
         id: ip
         uses: haythem/public-ip@bdddd92c198b0955f0b494a8ebeac529754262ff # v1.3.0
@@ -41,18 +44,9 @@ jobs:
         run: |
           az storage blob upload-batch \
             --connection-string "${{ secrets.ConnectionString }}" \
-            --source ./tool_f \
+            --source ./tool_f/artifact \
             --destination 'release' \
-            --overwrite true \
-            --pattern install.sh
-      - name: Upload to blob storage(*.gz)
-        run: |
-          az storage blob upload-batch \
-            --connection-string "${{ secrets.ConnectionString }}" \
-            --source ./tool_f/bin \
-            --destination 'release' \
-            --overwrite true \
-            --pattern *.gz
+            --overwrite true
       - name: Remove the public IP from the whitelist
         if: always()
         run: |
