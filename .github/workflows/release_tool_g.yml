@@ -1,0 +1,73 @@
+name: Release tool_g
+
+on:
+  push:
+    tags:
+      - 'tool_g/v[0-9]+.[0-9]+.[0-9]+'
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Setup Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.20'
+      - name: Build
+        shell: bash
+        run: |
+          cd tool_g
+          for goos in darwin linux
+          do
+            for goarch in amd64 arm64
+            do
+              GOOS=$goos GOARCH=$goarch go build -ldflags="-w -s" -trimpath -o artifact/tool_g_${goos}_${goarch} cmd/tool_g/main.go
+            done
+          done
+          cd artifact
+          for f in `ls -1`
+          do
+            gzip $f
+          done
+          tag_name=${{ github.ref_name }}
+          version=${tag_name##*/v}
+          mkdir $version
+          cp *.gz $version/
+          mkdir latest
+          mv *.gz latest/
+          cp ../install.sh ./
+      - name: Queries the GitHub actions runner's public IP address
+        id: ip
+        uses: haythem/public-ip@bdddd92c198b0955f0b494a8ebeac529754262ff # v1.3.0
+      - name: login
+        uses: azure/login@92a5484dfaf04ca78a94597f4f19fea633851fa2 # v1.4.6
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - name: Add the public IP to the whitelist
+        run: |
+          az storage account network-rule add \
+            --account-name ${{ secrets.AZURE_SA_NAME }} \
+            --ip-address ${{ steps.ip.outputs.ipv4 }}
+      - name: Sleep for 15 seconds
+        run: sleep 15s
+        shell: bash
+      - name: Upload to blob storage(install.sh)
+        run: |
+          az storage blob upload-batch \
+            --connection-string "${{ secrets.ConnectionString }}" \
+            --source ./tool_g/artifact \
+            --destination 'release' \
+            --overwrite true
+      - name: Remove the public IP from the whitelist
+        if: always()
+        run: |
+          az storage account network-rule remove \
+            --account-name ${{ secrets.AZURE_SA_NAME }} \
+            --ip-address ${{ steps.ip.outputs.ipv4 }}
+      - name: logout
+        if: always()
+        run: |
+          az logout
