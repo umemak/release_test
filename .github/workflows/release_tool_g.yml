@@ -51,7 +51,6 @@ jobs:
       - name: Upload to blob storage
         run: |
           az storage blob upload-batch \
-            --connection-string "${{ secrets.ConnectionString }}" \
             --source ./tool_g/artifact \
             --destination 'release' \
             --overwrite true
