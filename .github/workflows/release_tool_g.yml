@@ -54,7 +54,8 @@ jobs:
             --source ./tool_g/artifact \
             --destination 'release' \
             --overwrite true \
-            --account-name ${{ secrets.AZURE_SA_NAME }}
+            --account-name ${{ secrets.AZURE_SA_NAME }} \
+            --auth-mode login
       - name: logout
         if: always()
         run: |
