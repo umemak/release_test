@@ -1,0 +1,125 @@
+name: Release tool_g and h
+
+on:
+  push:
+    tags:
+      - 'tool_g/v[0-9]+.[0-9]+.[0-9]+'
+      - 'tool_h/v[0-9]+.[0-9]+.[0-9]+'
+
+env:
+  AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+  AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+  AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+  AZURE_SA_NAME: ${{ secrets.AZURE_SA_NAME }}
+
+jobs:
+  release_g:
+    name: Release G
+    if: startsWith(github.ref, 'refs/tags/tool_g/v')
+    runs-on: ubuntu-latest
+    environment: prod
+    permissions:
+      id-token: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Setup Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.20'
+      - name: Build
+        shell: bash
+        run: |
+          cd tool_g
+          for goos in darwin linux
+          do
+            for goarch in amd64 arm64
+            do
+              GOOS=$goos GOARCH=$goarch go build -ldflags="-w -s" -trimpath -o artifact/tool_g_${goos}_${goarch} cmd/tool_g/main.go
+            done
+          done
+          cd artifact
+          for f in `ls -1`
+          do
+            gzip $f
+          done
+          tag_name=${{ github.ref_name }}
+          version=${tag_name##*/v}
+          mkdir $version
+          cp *.gz $version/
+          mkdir latest
+          mv *.gz latest/
+          cp ../install.sh ./
+      - name: login
+        uses: azure/login@92a5484dfaf04ca78a94597f4f19fea633851fa2 # v1.4.6
+        with:
+          client-id: ${{ env.AZURE_CLIENT_ID }}
+          tenant-id: ${{ env.AZURE_TENANT_ID }}
+          subscription-id: ${{ env.AZURE_SUBSCRIPTION_ID }}
+      - name: Upload to blob storage
+        run: |
+          az storage blob upload-batch \
+            --source ./tool_g/artifact \
+            --destination 'release' \
+            --overwrite true \
+            --account-name ${{ env.AZURE_SA_NAME }} \
+            --auth-mode login
+      - name: logout
+        if: always()
+        run: |
+          az logout
+  release_h:
+    name: Release H
+    if: startsWith(github.ref, 'refs/tags/tool_h/v')
+    runs-on: ubuntu-latest
+    environment: prod
+    permissions:
+      id-token: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Setup Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.20'
+      - name: Build
+        shell: bash
+        run: |
+          cd tool_h
+          for goos in darwin linux
+          do
+            for goarch in amd64 arm64
+            do
+              GOOS=$goos GOARCH=$goarch go build -ldflags="-w -s" -trimpath -o artifact/tool_h_${goos}_${goarch} cmd/tool_h/main.go
+            done
+          done
+          cd artifact
+          for f in `ls -1`
+          do
+            gzip $f
+          done
+          tag_name=${{ github.ref_name }}
+          version=${tag_name##*/v}
+          mkdir $version
+          cp *.gz $version/
+          mkdir latest
+          mv *.gz latest/
+          cp ../install.sh ./
+      - name: login
+        uses: azure/login@92a5484dfaf04ca78a94597f4f19fea633851fa2 # v1.4.6
+        with:
+          client-id: ${{ env.AZURE_CLIENT_ID }}
+          tenant-id: ${{ env.AZURE_TENANT_ID }}
+          subscription-id: ${{ env.AZURE_SUBSCRIPTION_ID }}
+      - name: Upload to blob storage
+        run: |
+          az storage blob upload-batch \
+            --source ./tool_h/artifact \
+            --destination 'release' \
+            --overwrite true \
+            --account-name ${{ env.AZURE_SA_NAME }} \
+            --auth-mode login
+      - name: logout
+        if: always()
+        run: |
+          az logout
