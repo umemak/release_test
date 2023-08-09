@@ -1,3 +1,5 @@
+name: Release tool_g
+
 on:
   workflow_call:
     inputs:

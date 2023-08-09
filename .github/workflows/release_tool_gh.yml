@@ -14,22 +14,13 @@ env:
 
 jobs:
   release:
-    name: Release
-    runs-on: ubuntu-latest
-    environment: prod
-    permissions:
-      id-token: write
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-      - name: release_g
-        if: startsWith(github.ref, 'refs/tags/tool_g/v')
-        uses: ./.github/workflows/release_tool_g.yml
-        with:
-          AZURE_CLIENT_ID: ${{ env.AZURE_CLIENT_ID }}
-          AZURE_TENANT_ID: ${{ env.AZURE_TENANT_ID }}
-          AZURE_SUBSCRIPTION_ID: ${{ env.AZURE_SUBSCRIPTION_ID }}
-          AZURE_SA_NAME: ${{ env.AZURE_SA_NAME }}
+    if: startsWith(github.ref, 'refs/tags/tool_g/v')
+    uses: ./.github/workflows/release_tool_g.yml
+    with:
+      AZURE_CLIENT_ID: ${{ env.AZURE_CLIENT_ID }}
+      AZURE_TENANT_ID: ${{ env.AZURE_TENANT_ID }}
+      AZURE_SUBSCRIPTION_ID: ${{ env.AZURE_SUBSCRIPTION_ID }}
+      AZURE_SA_NAME: ${{ env.AZURE_SA_NAME }}
   release_h:
     name: Release H
     if: startsWith(github.ref, 'refs/tags/tool_h/v')
