@@ -16,7 +16,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
       - name: Load envs
-        run: source ./.github/workflows/envs.yml
+        run: |
+          for s in $(yq -o=j ./.github/workflows/config/config.yml | jq -r "to_entries|map(\"\(.key)=\(.value|tostring)\")|.[]"); do
+            echo $s >> $GITHUB_ENV
+          done
       - name: Setup Go
         uses: actions/setup-go@v4
         with:
