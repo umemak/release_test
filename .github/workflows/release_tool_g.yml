@@ -1,25 +1,9 @@
-name: Release tool_g and h
-
 on:
-  push:
-    tags:
-      - 'tool_g/v[0-9]+.[0-9]+.[0-9]+'
-      - 'tool_h/v[0-9]+.[0-9]+.[0-9]+'
-
-env:
-  AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
-  AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-  AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-  AZURE_SA_NAME: ${{ secrets.AZURE_SA_NAME }}
+  workflow_call:
 
 jobs:
   release_g:
     name: Release G
-    if: startsWith(github.ref, 'refs/tags/tool_g/v')
-    uses: ./.github/workflows/release_tool_g.yml
-  release_h:
-    name: Release H
-    if: startsWith(github.ref, 'refs/tags/tool_h/v')
     runs-on: ubuntu-latest
     environment: prod
     permissions:
@@ -34,12 +18,12 @@ jobs:
       - name: Build
         shell: bash
         run: |
-          cd tool_h
+          cd tool_g
           for goos in darwin linux
           do
             for goarch in amd64 arm64
             do
-              GOOS=$goos GOARCH=$goarch go build -ldflags="-w -s" -trimpath -o artifact/tool_h_${goos}_${goarch} cmd/tool_h/main.go
+              GOOS=$goos GOARCH=$goarch go build -ldflags="-w -s" -trimpath -o artifact/tool_g_${goos}_${goarch} cmd/tool_g/main.go
             done
           done
           cd artifact
@@ -63,7 +47,7 @@ jobs:
       - name: Upload to blob storage
         run: |
           az storage blob upload-batch \
-            --source ./tool_h/artifact \
+            --source ./tool_g/artifact \
             --destination 'release' \
             --overwrite true \
             --account-name ${{ env.AZURE_SA_NAME }} \
