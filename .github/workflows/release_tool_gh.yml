@@ -15,8 +15,12 @@ env:
 jobs:
   release:
     name: Release
+    runs-on: ubuntu-latest
+    environment: prod
+    permissions:
+      id-token: write
     steps:
-      release_g:
+      - name: release_g
         if: startsWith(github.ref, 'refs/tags/tool_g/v')
         uses: ./.github/workflows/release_tool_g.yml
         with:
