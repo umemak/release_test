@@ -20,6 +20,8 @@ jobs:
     permissions:
       id-token: write
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
       - uses: ./.github/workflows/release_tool_g.yml
         with:
           AZURE_CLIENT_ID: ${{ env.AZURE_CLIENT_ID }}
