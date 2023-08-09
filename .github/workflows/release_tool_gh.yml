@@ -17,10 +17,10 @@ jobs:
     if: startsWith(github.ref, 'refs/tags/tool_g/v')
     uses: ./.github/workflows/release_tool_g.yml
     with:
-      AZURE_CLIENT_ID: ${{ env.AZURE_CLIENT_ID }}
-      AZURE_TENANT_ID: ${{ env.AZURE_TENANT_ID }}
-      AZURE_SUBSCRIPTION_ID: ${{ env.AZURE_SUBSCRIPTION_ID }}
-      AZURE_SA_NAME: ${{ env.AZURE_SA_NAME }}
+      AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+      AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+      AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      AZURE_SA_NAME: ${{ secrets.AZURE_SA_NAME }}
   release_h:
     name: Release H
     if: startsWith(github.ref, 'refs/tags/tool_h/v')
