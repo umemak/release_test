@@ -13,29 +13,19 @@ env:
   AZURE_SA_NAME: ${{ secrets.AZURE_SA_NAME }}
 
 jobs:
-  release_g:
-    if: startsWith(github.ref, 'refs/tags/tool_g/v')
+  release:
+    name: Release
     runs-on: ubuntu-latest
     environment: prod
     permissions:
       id-token: write
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-      - uses: .github/workflows/release_tool_g.yml
-        with:
-          AZURE_CLIENT_ID: ${{ env.AZURE_CLIENT_ID }}
-          AZURE_TENANT_ID: ${{ env.AZURE_TENANT_ID }}
-          AZURE_SUBSCRIPTION_ID: ${{ env.AZURE_SUBSCRIPTION_ID }}
-          AZURE_SA_NAME: ${{ env.secrets.AZURE_SA_NAME }}
-  release_h:
-    name: Release H
-    if: startsWith(github.ref, 'refs/tags/tool_h/v')
-    runs-on: ubuntu-latest
-    environment: prod
-    permissions:
-      id-token: write
-    steps:
+      - name: Set env G
+        if: startsWith(github.ref, 'refs/tags/tool_g/v')
+        run: echo "TOOL_NAME=tool_g" >> $GITHUB_ENV
+      - name: Set env H
+        if: startsWith(github.ref, 'refs/tags/tool_h/v')
+        run: echo "TOOL_NAME=tool_h" >> $GITHUB_ENV
       - name: Checkout code
         uses: actions/checkout@v3
       - name: Setup Go
@@ -45,12 +35,12 @@ jobs:
       - name: Build
         shell: bash
         run: |
-          cd tool_h
+          cd $TOOL_NAME
           for goos in darwin linux
           do
             for goarch in amd64 arm64
             do
-              GOOS=$goos GOARCH=$goarch go build -ldflags="-w -s" -trimpath -o artifact/tool_h_${goos}_${goarch} cmd/tool_h/main.go
+              GOOS=$goos GOARCH=$goarch go build -ldflags="-w -s" -trimpath -o artifact/${TOOL_NAME}_${goos}_${goarch} cmd/${TOOL_NAME}/main.go
             done
           done
           cd artifact
@@ -74,7 +64,7 @@ jobs:
       - name: Upload to blob storage
         run: |
           az storage blob upload-batch \
-            --source ./tool_h/artifact \
+            --source ./${TOOL_NAME}/artifact \
             --destination 'release' \
             --overwrite true \
             --account-name ${{ env.AZURE_SA_NAME }} \
